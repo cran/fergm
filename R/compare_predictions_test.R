@@ -1,10 +1,10 @@
-#' Determine whether the percentage of ties correctly predicted by the FERGM are statistically distinguishable from those of the ERGM
+#' KS Test for Difference in Predictive Performance
 #'
-#' This is a plot function to determine whether the distributions of predictions from ERGM and FERGM objects differ.
-#' @param compare_predictions_out Matrix of correctly predicted ties produced by the compare_predictions function.
+#' This is a plot function to determine whether the distributions of predictions from ERGM and FERGM objects differ.  It does so by using a Kolmogorov-Smirnov Test.
+#' @param compare_predictions_out Matrix of correctly predicted ties produced by the \code{compare_predictions} function.
 #' @param alpha_level The significance level that should be used for the test.
 #' @keywords Fit GOF Prediction KS Kolmogorov-Smirnov Test
-#' @return Returns a ks.test output to determine if the ERGM predictions are less than the FERGM predictions and prints a message to assist with interpretation
+#' @return Returns \code{ks.test} output to determine if the percent of correctly predicted ERGM ties are less than those of the FERGM and prints a message to assist with interpretation
 #' @examples
 #' # load example data
 #' data("ergm.fit")
@@ -12,7 +12,7 @@
 #' data("mesa")
 #' # Use built in compare_predictions function to compare predictions of ERGM and FERGM,
 #' # few replications due to example
-#' predict_out <- compare_predictions(ergm_fit = ergm.fit, fergm_fit = fergm.fit,
+#' predict_out <- compare_predictions(ergm.fit = ergm.fit, fergm.fit = fergm.fit,
 #'                                    replications = 10)
 #'
 #' # We can also conduct a KS test to determine if the FERGM fit it statistically
@@ -48,6 +48,8 @@ compare_predictions_test <- function(compare_predictions_out = NULL, alpha_level
   }
 
   ks.test.out$data.name <- c("ERGM and FERGM percent of correctly predicted ties inhereted from the output of the compare_predictions function")
+
+  return(ks.test.out)
 
 
 }

@@ -1,8 +1,8 @@
-#' Compare FERGM to ERGM to assess accuracy in tie prediction
+#' Compare predictions of ERGM to FERGM.
 #'
-#' This function allows you to assess the importance of the frailty term in prediction
-#' @param ergm_fit An ERGM object that will be compared to the FERGM fit.
-#' @param fergm_fit The output of the fergm function that will be compared to the ERGM fit.
+#' This function allows you to assess the importance of the frailty term in prediction by comparing the predictive accuracy of an ERGM to an FERGM.
+#' @param ergm.fit A model object returned by the \code{ergm} function.  Must be specified.
+#' @param fergm.fit A model object returned by the \code{fergm} function.  Must be specified.
 #' @param seed An integer that sets the seed for the random number generator to assist in replication.  Defaults to 12345.
 #' @param replications The number of networks to be simulated to assess predictions. Defaults to 500.
 #' @keywords Fit GOF Prediction.
@@ -17,7 +17,7 @@
 #'
 #' # Use built in compare_predictions function to compare predictions of ERGM and FERGM,
 #' # few replications due to example
-#' predict_out <- compare_predictions(ergm_fit = ergm.fit, fergm_fit = fergm.fit,
+#' predict_out <- compare_predictions(ergm.fit = ergm.fit, fergm.fit = fergm.fit,
 #'                                    replications = 10)
 #'
 #' # Use the built in compare_predictions_plot function to examine the densities of
@@ -29,20 +29,20 @@
 #' compare_predictions_test(predict_out)
 #' @export
 
-compare_predictions <- function(ergm_fit = NULL, fergm_fit = NULL, seed = 12345, replications = 500){
+compare_predictions <- function(ergm.fit = NULL, fergm.fit = NULL, seed = 12345, replications = 500){
   lt <- function(m) { m[lower.tri(m)] }
 
   ergm.pred <- function()
   {
-    flo.truth <- lt(as.matrix(ergm_fit$network))
-    sim.pred <- lt(as.matrix(simulate.ergm(ergm_fit)))
+    flo.truth <- lt(as.matrix(ergm.fit$network))
+    sim.pred <- lt(as.matrix(simulate.ergm(ergm.fit)))
     sum(flo.truth == sim.pred) / 630
   }
 
   pct_correct_ergm <- replicate(replications, ergm.pred())
 
-  stan.dta <- fergm_fit$stan.dta
-  stan.fit <- fergm_fit$stan.fit
+  stan.dta <- fergm.fit$stan.dta
+  stan.fit <- fergm.fit$stan.fit
 
   truth <- stan.dta$y
   predictions <- extract(stan.fit, "predictions")$predictions

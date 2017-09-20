@@ -1,11 +1,14 @@
 ## ---- eval = FALSE-------------------------------------------------------
+#  # Load statnet which contains the ergm package and the faux.mesa.high network.
 #  library(statnet)
-#  library(coda)
 #  
+#  # Set seed for replication
 #  set.seed(1)
 #  
+#  # Load faux.mea.high daa
 #  data("faux.mesa.high")
 #  
+#  # Rename the object
 #  mesa <- faux.mesa.high
 
 ## ---- echo = TRUE, eval = FALSE------------------------------------------
@@ -23,7 +26,7 @@
 #          nodematch('Race', diff = FALSE) + gwesp(decay = 0.2, fixed = TRUE) +
 #          altkstar(lambda = 0.6, fixed = TRUE)")
 #  
-#  fergm.fit <- fergm(net = mesa, form = form, chains = 2)
+#  fergm.fit <- fergm(net = mesa, form = form, chains = 1)
 #  
 
 ## ---- echo = TRUE, eval = FALSE------------------------------------------
@@ -34,22 +37,28 @@
 #  est # in order of "form"
 #  
 #  # fergm built-in function to summarize posteior
-#  est <- clean_summary(fergm.fit, form = form)
+#  est <- clean_summary(fergm.fit)
 #  est <- clean_summary(fergm.fit,
 #                       custom_var_names = c("Edges", "Sex Homophily",
 #                                            "GradeHomophily", "Race Homophily",
 #                                            "GWESP", "Alternating K-Stars"))
 #  
 #  # Compare substantive implications via coef plot, these are with 95% credible intervals
+#  coef_plot(fergm.fit = fergm.fit)
+#  
+#  coef_plot(fergm.fit = fergm.fit,
+#            custom_var_names =  c("Edges", "Sex Homophily", "Grade Homophily",
+#                                  "Race Homophily", "GWESP", "Alternating K-Stars"))
 #  coef_plot(fergm.fit = fergm.fit,
 #            ergm.fit = ergm.fit,
 #            custom_var_names =  c("Edges", "Sex Homophily", "Grade Homophily",
 #                                  "Race Homophily", "GWESP", "Alternating K-Stars"))
-#  coef_plot(fergm.fit = fergm.fit,
-#            custom_var_names =  c("Edges", "Sex Homophily", "Grade Homophily",
-#                                  "Race Homophily", "GWESP", "Alternating K-Stars"))
+#  
 #  
 #  # You can also look at the density of particular variables using the following:
+#  
+#  densities <- coef_posterior_density(fergm.fit = fergm.fit)
+#  
 #  densities <- coef_posterior_density(fergm.fit = fergm.fit,
 #                                      custom_var_names = c("Edges", "Sex Homophily",
 #                                                           "Grade Homophily", "Race Homophily",
@@ -63,8 +72,9 @@
 #  trace
 #  
 #  # We have our own version that includes variable names and tidies it up a bit
+#  fergm_beta_traceplot(fergm.fit)
+#  
 #  fergm_beta_traceplot(fergm.fit,
-#                       form = NULL,
 #                       custom_var_names =  c("Edges", "Sex Homophily",
 #                                             "Grade Homophily", "Race Homophily",
 #                                             "GWESP", "Alternating K-Stars"))

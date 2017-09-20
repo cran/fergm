@@ -12,7 +12,7 @@
 
 <meta name="author" content="Benjamin W. Campbell" />
 
-<meta name="date" content="2017-08-14" />
+<meta name="date" content="2017-09-20" />
 
 <title>Mesa High Vignette</title>
 
@@ -70,32 +70,35 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Mesa High Vignette</h1>
 <h4 class="author"><em>Benjamin W. Campbell</em></h4>
-<h4 class="date"><em>2017-08-14</em></h4>
+<h4 class="date"><em>2017-09-20</em></h4>
 
 
 
 <div id="vignette-info-and-introduction" class="section level2">
 <h2>Vignette Info and Introduction</h2>
-<p>This vignette uses the <code>faux.mesa.high</code> data from Handock, Hunter, Butts, and Goodreau and the <code>ergm</code> package to provide an example of the basic functionality of the <code>fergm</code> package <span class="citation">(Hunter et al. 2008)</span>. In particular, it walks through estimating a well-fitting Exponential Random Graph (ERGM) model on the simulated “Mesa High” network. Once estimated, the corresponding Frailty Exponential Random Graph (FERGM) model is estimated and then compard to its ERGM counterpart. The documentation for each individual function includes chunks of code taken from this vignette.</p>
-<p>It is worth noting that many of these functions are built upon the <code>rstan</code> package <span class="citation">(Guo et al. 2016)</span>. Given that the output of the <code>fergm</code> function is a <code>stanfit</code> object, one may use much of the built-in functionality of the <code>rstan</code> function should they be familiar with the package.</p>
-<p>This vignette proceeds by walking through an example step by step to illustrate a representative workflow for using the FERGM package.</p>
-<p><em>Note: The code presented here is not built given the runtime for the FERGM presented here. As such, the code presented is purely illustrative. It will successfully run, however.</em></p>
+<p>This vignette uses the <code>faux.mesa.high</code> network from the <code>ergm</code> package to provide an example of the basic functionality of the <code>fergm</code> package <span class="citation">(Hunter et al. 2008)</span>. In particular, it walks through the estimation of a well-fitting Exponential Random Graph (ERGM) model on the simulated “Mesa High” network. Once estimated, the corresponding Frailty Exponential Random Graph (FERGM) model is estimated and compared to the comparable ERGM. The documentation for each individual function includes chunks of code taken from this vignette.</p>
+<p>It is worth noting that many of these functions are built upon the <code>rstan</code> package <span class="citation">(Guo et al. 2016)</span>. Given that the output of the <code>fergm</code> function is a <code>stanfit</code> object, one may use much of the built-in functionality of the <code>rstan</code> package should they be familiar with the package.</p>
+<p>This vignette proceeds by walking through an example step-by-step to illustrate a representative workflow for using the FERGM package.</p>
+<p><em>Note: The code presented here is not built given the runtime for the FERGM. As such, the code presented is purely illustrative. It will successfully execute, however.</em></p>
 </div>
 <div id="importing-mesa-high-network" class="section level2">
 <h2>Importing Mesa High Network</h2>
 <p>The following chunk of code imports the Mesa High network generously provided in the <code>ergm</code> package <span class="citation">(Hunter et al. 2008)</span>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(statnet)
-<span class="kw">library</span>(coda)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Load statnet which contains the ergm package and the faux.mesa.high network.</span>
+<span class="kw">library</span>(statnet)
 
+<span class="co"># Set seed for replication</span>
 <span class="kw">set.seed</span>(<span class="dv">1</span>)
 
+<span class="co"># Load faux.mea.high daa</span>
 <span class="kw">data</span>(<span class="st">&quot;faux.mesa.high&quot;</span>)
 
+<span class="co"># Rename the object</span>
 mesa &lt;-<span class="st"> </span>faux.mesa.high</code></pre></div>
 </div>
 <div id="ergm-and-fergm-estimation" class="section level2">
 <h2>ERGM and FERGM Estimation</h2>
-<p>The second step, once the data is imported, is to estimate a well-fitting ERGM and its FERGM alternative. The <code>fergm</code> function take at least two arguments, the network object to have an FERGM fit on and a character string formula containing <code>ergm-terms</code>. A variety of other function calls can be specified to override defaults, including the seed, the number of chains, number of warmup iterations, total number of iterations, and the number of cores to use. The <code>fergm</code> function returns a named list of two objects: <code>fergm$stan.dta</code> returns the data object handed to Stan and <code>fergm$stan.fit</code> is the stanfit object returned. The following chunk of code handles this.</p>
+<p>The second step, once the data is imported, is to estimate a well-fitting ERGM and its FERGM counterpart. The <code>fergm</code> function takes at least two arguments, the network object to have an FERGM fit on and a character string formula containing undirected <code>ergm-terms</code>. A variety of other function arguments can be specified to override defaults, including the seed, the number of chains, number of warmup iterations, total number of iterations, and the number of cores used. The <code>fergm</code> function returns a named list of two objects: <code>fergm$stan.dta</code> returns the data object handed to Stan and <code>fergm$stan.fit</code> is the <code>stanfit</code> object returned. The following chunk of code handles this.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># ERGM fit</span>
 ergm.fit &lt;-<span class="st"> </span><span class="kw">ergm</span>(mesa ~<span class="st"> </span>edges +
 <span class="st">                   </span><span class="kw">nodematch</span>(<span class="st">'Sex'</span>) +
@@ -110,13 +113,13 @@ form &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&q
 <span class="st">        nodematch('Race', diff = FALSE) + gwesp(decay = 0.2, fixed = TRUE) + </span>
 <span class="st">        altkstar(lambda = 0.6, fixed = TRUE)&quot;</span>)
 
-fergm.fit &lt;-<span class="st"> </span><span class="kw">fergm</span>(<span class="dt">net =</span> mesa, <span class="dt">form =</span> form, <span class="dt">chains =</span> <span class="dv">2</span>)</code></pre></div>
+fergm.fit &lt;-<span class="st"> </span><span class="kw">fergm</span>(<span class="dt">net =</span> mesa, <span class="dt">form =</span> form, <span class="dt">chains =</span> <span class="dv">1</span>)</code></pre></div>
 </div>
 <div id="summarizing-fergm-output" class="section level2">
 <h2>Summarizing FERGM Output</h2>
-<p>While there is not a built in <code>summary()</code> function for the FERGM, there are several means to summarizing the <code>fergm</code> output. One way to do so cleanly is using the built-in <code>clean_summary()</code> function. This function takes at least two objects: the output of the <code>fergm</code> function and either the formula string used in the <code>fergm</code> function or a vector of custom character names for each coefficient.</p>
-<p>In addition, we provide a built-in function to create coefficient plots: <code>coef_plot()</code>. This function takes either an <code>fergm</code> object to plot the FERGM coefficients or both an <code>fergm</code> and <code>ergm</code> object to compare these coefficients.</p>
-<p>We also include a built-in function to plot the densities for each coefficient of interest: The code is as follows:</p>
+<p>While the <code>fergm</code> package does not contain a built in <code>summary</code> function for the FERGM, there are several means to summarize <code>fergm</code> output. One way to do so cleanly is to use the built-in <code>clean_summary</code> function. This function takes two objects: the output of the <code>fergm</code> function and a vector of custom character names for each coefficient. If a vector of custom chaaracter names is not provided then the function inherits the formula used in the <code>fergm</code> call, which holds true for other functions including the <code>custom_var_names</code> argument.</p>
+<p>In addition, we provide a built-in function to create coefficient plots: <code>coef_plot</code>. This function takes either an <code>fergm</code> object to plot the FERGM coefficients or both an <code>fergm</code> and <code>ergm</code> object to plot and compare the coefficients.</p>
+<p>We also include a built-in function to plot the densities for each coefficient of interest, <code>coef_posterior_density</code>. The code is as follows:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Conventional rstan approach to extracting posterior summary</span>
 stan.smry &lt;-<span class="st"> </span><span class="kw">summary</span>(fergm.fit$stan.fit)$summary
 beta_df &lt;-<span class="st"> </span>stan.smry[<span class="kw">grep</span>(<span class="st">&quot;beta&quot;</span>, <span class="kw">rownames</span>(stan.smry)),]
@@ -124,48 +127,55 @@ est &lt;-<span class="st"> </span><span class="kw">round</span>(beta_df[,<span c
 est <span class="co"># in order of &quot;form&quot;</span>
 
 <span class="co"># fergm built-in function to summarize posteior</span>
-est &lt;-<span class="st"> </span><span class="kw">clean_summary</span>(fergm.fit, <span class="dt">form =</span> form)
+est &lt;-<span class="st"> </span><span class="kw">clean_summary</span>(fergm.fit)
 est &lt;-<span class="st"> </span><span class="kw">clean_summary</span>(fergm.fit, 
                      <span class="dt">custom_var_names =</span> <span class="kw">c</span>(<span class="st">&quot;Edges&quot;</span>, <span class="st">&quot;Sex Homophily&quot;</span>,
                                           <span class="st">&quot;GradeHomophily&quot;</span>, <span class="st">&quot;Race Homophily&quot;</span>,
                                           <span class="st">&quot;GWESP&quot;</span>, <span class="st">&quot;Alternating K-Stars&quot;</span>))
 
 <span class="co"># Compare substantive implications via coef plot, these are with 95% credible intervals</span>
+<span class="kw">coef_plot</span>(<span class="dt">fergm.fit =</span> fergm.fit)
+
+<span class="kw">coef_plot</span>(<span class="dt">fergm.fit =</span> fergm.fit, 
+          <span class="dt">custom_var_names =</span>  <span class="kw">c</span>(<span class="st">&quot;Edges&quot;</span>, <span class="st">&quot;Sex Homophily&quot;</span>, <span class="st">&quot;Grade Homophily&quot;</span>, 
+                                <span class="st">&quot;Race Homophily&quot;</span>, <span class="st">&quot;GWESP&quot;</span>, <span class="st">&quot;Alternating K-Stars&quot;</span>))
 <span class="kw">coef_plot</span>(<span class="dt">fergm.fit =</span> fergm.fit, 
           <span class="dt">ergm.fit =</span> ergm.fit, 
           <span class="dt">custom_var_names =</span>  <span class="kw">c</span>(<span class="st">&quot;Edges&quot;</span>, <span class="st">&quot;Sex Homophily&quot;</span>, <span class="st">&quot;Grade Homophily&quot;</span>, 
                                 <span class="st">&quot;Race Homophily&quot;</span>, <span class="st">&quot;GWESP&quot;</span>, <span class="st">&quot;Alternating K-Stars&quot;</span>))
-<span class="kw">coef_plot</span>(<span class="dt">fergm.fit =</span> fergm.fit, 
-          <span class="dt">custom_var_names =</span>  <span class="kw">c</span>(<span class="st">&quot;Edges&quot;</span>, <span class="st">&quot;Sex Homophily&quot;</span>, <span class="st">&quot;Grade Homophily&quot;</span>, 
-                                <span class="st">&quot;Race Homophily&quot;</span>, <span class="st">&quot;GWESP&quot;</span>, <span class="st">&quot;Alternating K-Stars&quot;</span>))
+
 
 <span class="co"># You can also look at the density of particular variables using the following:</span>
+
+densities &lt;-<span class="st"> </span><span class="kw">coef_posterior_density</span>(<span class="dt">fergm.fit =</span> fergm.fit)
+
 densities &lt;-<span class="st"> </span><span class="kw">coef_posterior_density</span>(<span class="dt">fergm.fit =</span> fergm.fit, 
                                     <span class="dt">custom_var_names =</span> <span class="kw">c</span>(<span class="st">&quot;Edges&quot;</span>, <span class="st">&quot;Sex Homophily&quot;</span>, 
                                                          <span class="st">&quot;Grade Homophily&quot;</span>, <span class="st">&quot;Race Homophily&quot;</span>, 
                                                          <span class="st">&quot;GWESP&quot;</span>, <span class="st">&quot;Alternating K-Stars&quot;</span>))
 densities[[<span class="dv">1</span>]]
 densities[[<span class="dv">2</span>]]</code></pre></div>
-<p>There are also a series of <code>rstan</code> functions to summarize posterior distributions, and we would refer the reader there should they be interested in learning their alternatives.</p>
+<p>There are also a series of <code>rstan</code> functions to summarize posterior distributions, and we would refer the reader to the <code>rstan</code> manual should they be interested in learning their alternatives.</p>
 </div>
 <div id="fergm-diagnostics" class="section level2">
 <h2>FERGM Diagnostics</h2>
-<p>To visually check whether there is evidence that the chains used to estimate the FERGM have converged, traceplots may be used. While <code>rstan</code> has a built-in traceplot function that could easily be used, it does not appear sutable for presentation. As such, building upon the <code>rstan::traceplot()</code> function, we provide a cleaner alternative. The code is as follows:</p>
+<p>To visually check whether there is evidence that the chains used to estimate the FERGM have converged, traceplots may be used. While <code>rstan</code> has a built-in traceplot function that could easily be used, changes may be desired to produce publication-quality graphics. As such, building upon the <code>rstan::traceplot()</code> function, we provide a cleaner alternative. The code is as follows:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Use rstan functions to assess whether chains have evidence of converging</span>
 trace &lt;-<span class="st"> </span>rstan::<span class="kw">traceplot</span>(fergm.fit$stan.fit, <span class="dt">pars =</span> <span class="st">&quot;beta&quot;</span>)
 trace
 
 <span class="co"># We have our own version that includes variable names and tidies it up a bit</span>
+<span class="kw">fergm_beta_traceplot</span>(fergm.fit)
+
 <span class="kw">fergm_beta_traceplot</span>(fergm.fit,
-                     <span class="dt">form =</span> <span class="ot">NULL</span>,
                      <span class="dt">custom_var_names =</span>  <span class="kw">c</span>(<span class="st">&quot;Edges&quot;</span>, <span class="st">&quot;Sex Homophily&quot;</span>, 
                                            <span class="st">&quot;Grade Homophily&quot;</span>, <span class="st">&quot;Race Homophily&quot;</span>, 
                                            <span class="st">&quot;GWESP&quot;</span>, <span class="st">&quot;Alternating K-Stars&quot;</span>))</code></pre></div>
-<p>Additional diagnostics are available using the <code>rstan</code> package, and we would refer the reader to their well-composed vignette for further diagnostics or details on their built in diagnostic plots.</p>
+<p>Additional diagnostics are available using the <code>rstan</code> package, and we would refer the reader to their well-written manual for further diagnostics or details on their built-in diagnostic plots.</p>
 </div>
-<div id="compare-ergm-ad-fergm-fit" class="section level2">
-<h2>Compare ERGM ad FERGM Fit</h2>
-<p>One might be interested in the relative difference between the fit of an ERGM and an FERGM. While the <code>coef_plot()</code> function offers an opportunity to compare the coefficients of these two models, it does not provide a means to assess the relative fit of each model. The primary way relative fit is examined is through simulating a number of networks based upon the model results and examining the average number of correctly predicted ties across all simulated networks. This routine is described by the manuscript presenting the model <span class="citation">(Box-Steffensmeier, Morgan, and Christenson 2017)</span>. The code to perform this routine is as follows:</p>
+<div id="compare-ergm-and-fergm-fit" class="section level2">
+<h2>Compare ERGM and FERGM Fit</h2>
+<p>One might be interested in the relative difference in predictive performance between an ERGM and an FERGM. While the <code>coef_plot()</code> function offers an opportunity to compare the coefficients of these two models, it does not provide a means to assess the relative fit of each model. Relative fit is examined through simulating a number of networks based upon the model results and examining the average number of correctly predicted ties across all simulated networks. This routine is described by the manuscript presenting the model <span class="citation">(Box-Steffensmeier, Morgan, and Christenson 2017)</span>. The code to perform this routine is as follows:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Use fergm built in compare_predictions function to compare predictions of ERGM and FERGM</span>
 predict_out &lt;-<span class="st"> </span><span class="kw">compare_predictions</span>(<span class="dt">ergm_fit =</span> ergm.fit, <span class="dt">fergm_fit =</span> fergm.fit, <span class="dt">replications =</span> <span class="dv">100</span>)
 
