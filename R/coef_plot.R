@@ -6,7 +6,7 @@
 #' @param custom_var_names A vector of custom variable names used in presentation that match the order of the \code{form} object passed to \code{fergm}.  If not provided, defaults to names inherited by \code{fergm.fit}.
 #' @return This function produces a coefficient rope-ladder plot containing 95\% confidence intervals using ggplot2.  The function either takes \code{fergm} model output or \code{fergm} and \code{ergm} model output.  The former is effective in summarizing \code{fergm} model output while the latter is effective in comparing FERGM and ERGM estimates.
 #' @keywords FERGM interpret summary
-#' @references Box-Steffensmeier, Janet M., Dino P. Christenson, and Jason W. Morgan. 2017. ``Modeling Unobserved Heterogeneity in Social Networks with the Frailty Exponential Random Graph Model." \emph{Political Analysis}.
+#' @references Box-Steffensmeier, Janet M., Dino P. Christenson, and Jason W. Morgan. 2018. ``Modeling Unobserved Heterogeneity in Social Networks with the Frailty Exponential Random Graph Model." \emph{Political Analysis}. (26)1:3-19.references Box-Steffensmeier, Janet M., Dino P. Christenson, and Jason W. Morgan. 2017. ``Modeling Unobserved Heterogeneity in Social Networks with the Frailty Exponential Random Graph Model." \emph{Political Analysis}.
 #' @references Stan Development Team (2016). RStan: the R interface to Stan. R package version 2.14.1. \url{http://mc-stan.org/}.
 #' @examples
 #' # load example data
@@ -26,8 +26,7 @@ coef_plot <- function(fergm.fit = NULL, ergm.fit = NULL, custom_var_names = NULL
   its <- rstan::extract(fergm.fit$stan.fit)$beta
 
   if(is.null(custom_var_names)){
-    custom_var_names <- fergm.fit$form
-    custom_var_names <- stringr::str_replace_all(string = unlist(strsplit(custom_var_names, "[+]")), pattern=" ", repl="")
+    custom_var_names <- colnames(fergm.fit$stan.dta$x)
   }
 
   fergm_df <- cbind(as.data.frame(colMeans(its)), as.data.frame(matrixStats::colQuantiles(its, probs = c(0.025, 0.975))))

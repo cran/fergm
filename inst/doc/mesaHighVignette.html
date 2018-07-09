@@ -12,7 +12,7 @@
 
 <meta name="author" content="Benjamin W. Campbell" />
 
-<meta name="date" content="2017-09-20" />
+<meta name="date" content="2018-07-09" />
 
 <title>Mesa High Vignette</title>
 
@@ -70,13 +70,13 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Mesa High Vignette</h1>
 <h4 class="author"><em>Benjamin W. Campbell</em></h4>
-<h4 class="date"><em>2017-09-20</em></h4>
+<h4 class="date"><em>2018-07-09</em></h4>
 
 
 
 <div id="vignette-info-and-introduction" class="section level2">
 <h2>Vignette Info and Introduction</h2>
-<p>This vignette uses the <code>faux.mesa.high</code> network from the <code>ergm</code> package to provide an example of the basic functionality of the <code>fergm</code> package <span class="citation">(Hunter et al. 2008)</span>. In particular, it walks through the estimation of a well-fitting Exponential Random Graph (ERGM) model on the simulated “Mesa High” network. Once estimated, the corresponding Frailty Exponential Random Graph (FERGM) model is estimated and compared to the comparable ERGM. The documentation for each individual function includes chunks of code taken from this vignette.</p>
+<p>This vignette uses the faux.mesa.high network from the ergm package <span class="citation">(Hunter et al. 2008)</span> to provide an example of the basic functionality of the fergm package <span class="citation">(Box-Steffensmeier, Morgan, and Christenson 2018)</span>. In particular, it walks through the estimation of a well-fitting Exponential Random Graph (ERGM) model on the simulated “Mesa High” network. Once estimated, the corresponding Frailty Exponential Random Graph (FERGM) model is estimated and compared to the comparable ERGM. The documentation for each individual function includes chunks of code taken from this vignette.</p>
 <p>It is worth noting that many of these functions are built upon the <code>rstan</code> package <span class="citation">(Guo et al. 2016)</span>. Given that the output of the <code>fergm</code> function is a <code>stanfit</code> object, one may use much of the built-in functionality of the <code>rstan</code> package should they be familiar with the package.</p>
 <p>This vignette proceeds by walking through an example step-by-step to illustrate a representative workflow for using the FERGM package.</p>
 <p><em>Note: The code presented here is not built given the runtime for the FERGM. As such, the code presented is purely illustrative. It will successfully execute, however.</em></p>
@@ -175,7 +175,7 @@ trace
 </div>
 <div id="compare-ergm-and-fergm-fit" class="section level2">
 <h2>Compare ERGM and FERGM Fit</h2>
-<p>One might be interested in the relative difference in predictive performance between an ERGM and an FERGM. While the <code>coef_plot()</code> function offers an opportunity to compare the coefficients of these two models, it does not provide a means to assess the relative fit of each model. Relative fit is examined through simulating a number of networks based upon the model results and examining the average number of correctly predicted ties across all simulated networks. This routine is described by the manuscript presenting the model <span class="citation">(Box-Steffensmeier, Morgan, and Christenson 2017)</span>. The code to perform this routine is as follows:</p>
+<p>One might be interested in the relative difference in predictive performance between an ERGM and an FERGM. While the <code>coef_plot()</code> function offers an opportunity to compare the coefficients of these two models, it does not provide a means to assess the relative fit of each model. Relative fit is examined through simulating a number of networks based upon the model results and examining the average number of correctly predicted ties across all simulated networks. This routine is described by the manuscript presenting the model <span class="citation">(Box-Steffensmeier, Morgan, and Christenson 2018)</span>. The code to perform this routine is as follows:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Use fergm built in compare_predictions function to compare predictions of ERGM and FERGM</span>
 predict_out &lt;-<span class="st"> </span><span class="kw">compare_predictions</span>(<span class="dt">ergm_fit =</span> ergm.fit, <span class="dt">fergm_fit =</span> fergm.fit, <span class="dt">replications =</span> <span class="dv">100</span>)
 
@@ -190,8 +190,8 @@ predict_out &lt;-<span class="st"> </span><span class="kw">compare_predictions</
 <div id="references" class="section level1 unnumbered">
 <h1>References</h1>
 <div id="refs" class="references">
-<div id="ref-box2017modeling">
-<p>Box-Steffensmeier, Jan, Jason Morgan, and Dino Christenson. 2017. “Modeling Unobserved Heterogeneity in Social Networks with the Frailty Exponential Random Graph Model.” <em>Political Analysis</em>.</p>
+<div id="ref-box2018modeling">
+<p>Box-Steffensmeier, Jan, Jason Morgan, and Dino Christenson. 2018. “Modeling Unobserved Heterogeneity in Social Networks with the Frailty Exponential Random Graph Model.” <em>Political Analysis</em> 26 (1).</p>
 </div>
 <div id="ref-guo2016rstan">
 <p>Guo, Jiqiang, D Lee, K Sakrejda, J Gabry, B Goodrich, J De Guzman, E Niebler, T Heller, and J Fletcher. 2016. “Rstan: R Interface to Stan.” <em>R Package Version</em> 2: 0–3.</p>
