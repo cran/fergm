@@ -3,13 +3,14 @@
 #' This function allows you to assess the importance of the frailty term in prediction by comparing the predictive accuracy of an ERGM to an FERGM.
 #' @param ergm.fit A model object returned by the \code{ergm} function.  Must be specified.
 #' @param fergm.fit A model object returned by the \code{fergm} function.  Must be specified.
-#' @param seed An integer that sets the seed for the random number generator to assist in replication.  Defaults to 12345.
+#' @param seed An integer that sets the seed for the random number generator to assist in replication.  Defaults to a null value for no seed setting.
 #' @param replications The number of networks to be simulated to assess predictions. Defaults to 500.
 #' @keywords Fit GOF Prediction.
 #' @references Box-Steffensmeier, Janet M., Dino P. Christenson, and Jason W. Morgan. 2018. ``Modeling Unobserved Heterogeneity in Social Networks with the Frailty Exponential Random Graph Model." \emph{Political Analysis}. (26)1:3-19.
 #' @references Stan Development Team (2016). RStan: the R interface to Stan. R package version 2.14.1. \url{http://mc-stan.org/}.
 #' @return The compare_predictions function returns a matrix reflecting the number of correctly predicted ties for the ERGM and FERGM for each network simulated.
 #' @examples
+#' \dontrun{
 #' # load example data
 #' data("ergm.fit")
 #' data("fergm.fit")
@@ -27,9 +28,17 @@
 #' # We can also conduct a KS test to determine if the FERGM fit
 #'      # it statistically disginguishable from the ERGM fit
 #' compare_predictions_test(predict_out)
+#' }
 #' @export
 
-compare_predictions <- function(ergm.fit = NULL, fergm.fit = NULL, seed = 12345, replications = 500){
+compare_predictions <- function(ergm.fit = NULL, fergm.fit = NULL, seed = NULL, replications = 500){
+
+  if(!is.null(seed)){
+    set.seed(seed)
+  } else {
+    warning("Note: This function relies upon network simulation to compare ERGM and FERGM predictions.  Consider specifying a seed to set to ensure replicability.")
+  }
+
   lt <- function(m) { m[lower.tri(m)] }
   n_dyads <- choose(ergm.fit$network$gal$n, 2)
 

@@ -12,7 +12,7 @@
 
 <meta name="author" content="Benjamin W. Campbell" />
 
-<meta name="date" content="2018-07-09" />
+<meta name="date" content="2018-08-22" />
 
 <title>Mesa High Vignette</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Mesa High Vignette</h1>
 <h4 class="author"><em>Benjamin W. Campbell</em></h4>
-<h4 class="date"><em>2018-07-09</em></h4>
+<h4 class="date"><em>2018-08-22</em></h4>
 
 
 
@@ -177,7 +177,7 @@ trace
 <h2>Compare ERGM and FERGM Fit</h2>
 <p>One might be interested in the relative difference in predictive performance between an ERGM and an FERGM. While the <code>coef_plot()</code> function offers an opportunity to compare the coefficients of these two models, it does not provide a means to assess the relative fit of each model. Relative fit is examined through simulating a number of networks based upon the model results and examining the average number of correctly predicted ties across all simulated networks. This routine is described by the manuscript presenting the model <span class="citation">(Box-Steffensmeier, Morgan, and Christenson 2018)</span>. The code to perform this routine is as follows:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Use fergm built in compare_predictions function to compare predictions of ERGM and FERGM</span>
-predict_out &lt;-<span class="st"> </span><span class="kw">compare_predictions</span>(<span class="dt">ergm_fit =</span> ergm.fit, <span class="dt">fergm_fit =</span> fergm.fit, <span class="dt">replications =</span> <span class="dv">100</span>)
+predict_out &lt;-<span class="st"> </span><span class="kw">compare_predictions</span>(<span class="dt">ergm.fit =</span> ergm.fit, <span class="dt">fergm.fit =</span> fergm.fit, <span class="dt">replications =</span> <span class="dv">100</span>)
 
 <span class="co"># Use the built in compare_predictions_plot function to examine the densities of correctly predicted</span>
   <span class="co"># ties from the compare_predictions simulations</span>

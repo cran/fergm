@@ -4,7 +4,7 @@
 \alias{compare_predictions}
 \title{Compare predictions of ERGM to FERGM.}
 \usage{
-compare_predictions(ergm.fit = NULL, fergm.fit = NULL, seed = 12345,
+compare_predictions(ergm.fit = NULL, fergm.fit = NULL, seed = NULL,
   replications = 500)
 }
 \arguments{
@@ -12,7 +12,7 @@ compare_predictions(ergm.fit = NULL, fergm.fit = NULL, seed = 12345,
 
 \item{fergm.fit}{A model object returned by the \code{fergm} function.  Must be specified.}
 
-\item{seed}{An integer that sets the seed for the random number generator to assist in replication.  Defaults to 12345.}
+\item{seed}{An integer that sets the seed for the random number generator to assist in replication.  Defaults to a null value for no seed setting.}
 
 \item{replications}{The number of networks to be simulated to assess predictions. Defaults to 500.}
 }
@@ -23,6 +23,7 @@ The compare_predictions function returns a matrix reflecting the number of corre
 This function allows you to assess the importance of the frailty term in prediction by comparing the predictive accuracy of an ERGM to an FERGM.
 }
 \examples{
+\dontrun{
 # load example data
 data("ergm.fit")
 data("fergm.fit")
@@ -40,6 +41,7 @@ compare_predictions_plot(predict_out)
 # We can also conduct a KS test to determine if the FERGM fit
      # it statistically disginguishable from the ERGM fit
 compare_predictions_test(predict_out)
+}
 }
 \references{
 Box-Steffensmeier, Janet M., Dino P. Christenson, and Jason W. Morgan. 2018. ``Modeling Unobserved Heterogeneity in Social Networks with the Frailty Exponential Random Graph Model." \emph{Political Analysis}. (26)1:3-19.
