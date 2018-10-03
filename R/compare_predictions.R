@@ -3,6 +3,7 @@
 #' This function allows you to assess the importance of the frailty term in prediction by comparing the predictive accuracy of an ERGM to an FERGM.
 #' @param ergm.fit A model object returned by the \code{ergm} function.  Must be specified.
 #' @param fergm.fit A model object returned by the \code{fergm} function.  Must be specified.
+#' @param net This is the network object that the ERGM and FERGM were fit on.  This network object must be in the global environment.  Must be specified.
 #' @param seed An integer that sets the seed for the random number generator to assist in replication.  Defaults to a null value for no seed setting.
 #' @param replications The number of networks to be simulated to assess predictions. Defaults to 500.
 #' @keywords Fit GOF Prediction.
@@ -10,7 +11,6 @@
 #' @references Stan Development Team (2016). RStan: the R interface to Stan. R package version 2.14.1. \url{http://mc-stan.org/}.
 #' @return The compare_predictions function returns a matrix reflecting the number of correctly predicted ties for the ERGM and FERGM for each network simulated.
 #' @examples
-#' \dontrun{
 #' # load example data
 #' data("ergm.fit")
 #' data("fergm.fit")
@@ -19,7 +19,7 @@
 #' # Use built in compare_predictions function to compare predictions of ERGM and FERGM,
 #' # few replications due to example
 #' predict_out <- compare_predictions(ergm.fit = ergm.fit, fergm.fit = fergm.fit,
-#'                                    replications = 10)
+#'                                    net = mesa, replications = 10, seed=12345)
 #'
 #' # Use the built in compare_predictions_plot function to examine the densities of
 #' #  correctly predicted ties from the compare_predictions simulations
@@ -28,10 +28,9 @@
 #' # We can also conduct a KS test to determine if the FERGM fit
 #'      # it statistically disginguishable from the ERGM fit
 #' compare_predictions_test(predict_out)
-#' }
 #' @export
 
-compare_predictions <- function(ergm.fit = NULL, fergm.fit = NULL, seed = NULL, replications = 500){
+compare_predictions <- function(ergm.fit = NULL, fergm.fit = NULL, net = NULL, seed = NULL, replications = 500){
 
   if(!is.null(seed)){
     set.seed(seed)
@@ -42,12 +41,16 @@ compare_predictions <- function(ergm.fit = NULL, fergm.fit = NULL, seed = NULL, 
   lt <- function(m) { m[lower.tri(m)] }
   n_dyads <- choose(ergm.fit$network$gal$n, 2)
 
+  new_formula <- stats::update.formula(ergm.fit$formula, net ~ .)
+  ergm_coefs <- ergm.fit$coef
+
   ergm.pred <- function()
   {
     flo.truth <- lt(as.matrix(ergm.fit$network))
-    sim.pred <- lt(as.matrix(simulate.ergm(ergm.fit)))
+    sim.pred <- lt(as.matrix(simulate(ergm.fit)))
     sum(flo.truth == sim.pred) / n_dyads
   }
+
 
   pct_correct_ergm <- replicate(replications, ergm.pred())
 
@@ -69,4 +72,3 @@ compare_predictions <- function(ergm.fit = NULL, fergm.fit = NULL, seed = NULL, 
 
   return(correct_mat)
 }
-

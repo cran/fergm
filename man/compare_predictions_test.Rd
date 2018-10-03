@@ -25,7 +25,7 @@ data("mesa")
 # Use built in compare_predictions function to compare predictions of ERGM and FERGM,
 # few replications due to example
 predict_out <- compare_predictions(ergm.fit = ergm.fit, fergm.fit = fergm.fit,
-                                   replications = 10)
+                                   net = mesa, replications = 10, seed = 12345)
 
 # We can also conduct a KS test to determine if the FERGM fit it statistically
  # distinguishable from the ERGM fit
