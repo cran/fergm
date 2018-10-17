@@ -12,7 +12,7 @@
 
 <meta name="author" content="Benjamin W. Campbell" />
 
-<meta name="date" content="2018-10-02" />
+<meta name="date" content="2018-10-17" />
 
 <title>Mesa High Vignette</title>
 
@@ -278,7 +278,7 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 
 <h1 class="title toc-ignore">Mesa High Vignette</h1>
 <h4 class="author"><em>Benjamin W. Campbell</em></h4>
-<h4 class="date"><em>2018-10-02</em></h4>
+<h4 class="date"><em>2018-10-17</em></h4>
 
 
 
@@ -340,7 +340,7 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <a class="sourceLine" id="cb3-10" data-line-number="10">                     <span class="dt">custom_var_names =</span> <span class="kw">c</span>(<span class="st">&quot;Edges&quot;</span>, <span class="st">&quot;Sex Homophily&quot;</span>,</a>
 <a class="sourceLine" id="cb3-11" data-line-number="11">                                          <span class="st">&quot;GradeHomophily&quot;</span>, <span class="st">&quot;Race Homophily&quot;</span>,</a>
 <a class="sourceLine" id="cb3-12" data-line-number="12">                                          <span class="st">&quot;GWESP&quot;</span>, <span class="st">&quot;Alternating K-Stars&quot;</span>))</a>
-<a class="sourceLine" id="cb3-13" data-line-number="13"></a>
+<a class="sourceLine" id="cb3-13" data-line-number="13">est</a>
 <a class="sourceLine" id="cb3-14" data-line-number="14"><span class="co"># Compare substantive implications via coef plot, these are with 95% credible intervals</span></a>
 <a class="sourceLine" id="cb3-15" data-line-number="15"><span class="kw">coef_plot</span>(<span class="dt">fergm.fit =</span> fergm.fit)</a>
 <a class="sourceLine" id="cb3-16" data-line-number="16"></a>
@@ -383,17 +383,18 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 </div>
 <div id="compare-ergm-and-fergm-fit" class="section level2">
 <h2>Compare ERGM and FERGM Fit</h2>
-<p>One might be interested in the relative difference in predictive performance between an ERGM and an FERGM. While the <code>coef_plot()</code> function offers an opportunity to compare the coefficients of these two models, it does not provide a means to assess the relative fit of each model. Relative fit is examined through simulating a number of networks based upon the model results and examining the average number of correctly predicted ties across all simulated networks. This routine is described by the manuscript presenting the model <span class="citation">(Box-Steffensmeier, Morgan, and Christenson 2018)</span>. The code to perform this routine is as follows:</p>
+<p>One might be interested in the relative difference in predictive performance between an ERGM and an FERGM. While the <code>coef_plot()</code> function offers an opportunity to compare the coefficients of these two models, it does not provide a means to assess the relative fit of each model. Relative fit is examined through simulating a number of networks based upon the model results and examining the average number of correctly predicted ties across all simulated networks. This routine is described by the manuscript presenting the model <span class="citation">(Box-Steffensmeier, Morgan, and Christenson 2018)</span>. <strong>Note, specifying an object named net prior to estimating the compare_predictions function is necessary to produce a valid network on the left-hand side of the simulate method for ERGMs.</strong> The code to perform this routine is as follows:</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="co"># Use fergm built in compare_predictions function to compare predictions of ERGM and FERGM</span></a>
-<a class="sourceLine" id="cb5-2" data-line-number="2">predict_out &lt;-<span class="st"> </span><span class="kw">compare_predictions</span>(<span class="dt">ergm.fit =</span> ergm.fit, <span class="dt">fergm.fit =</span> fergm.fit, <span class="dt">replications =</span> <span class="dv">100</span>)</a>
-<a class="sourceLine" id="cb5-3" data-line-number="3"></a>
-<a class="sourceLine" id="cb5-4" data-line-number="4"><span class="co"># Use the built in compare_predictions_plot function to examine the densities of correctly predicted</span></a>
-<a class="sourceLine" id="cb5-5" data-line-number="5">  <span class="co"># ties from the compare_predictions simulations</span></a>
-<a class="sourceLine" id="cb5-6" data-line-number="6"><span class="kw">compare_predictions_plot</span>(predict_out)</a>
-<a class="sourceLine" id="cb5-7" data-line-number="7"></a>
-<a class="sourceLine" id="cb5-8" data-line-number="8"><span class="co"># We can also conduct a KS test to determine if the FERGM fit it statistically disginguishable </span></a>
-<a class="sourceLine" id="cb5-9" data-line-number="9">  <span class="co"># from the ERGM fit</span></a>
-<a class="sourceLine" id="cb5-10" data-line-number="10"><span class="kw">compare_predictions_test</span>(predict_out)</a></code></pre></div>
+<a class="sourceLine" id="cb5-2" data-line-number="2">net &lt;-<span class="st"> </span>ergm.fit<span class="op">$</span>network</a>
+<a class="sourceLine" id="cb5-3" data-line-number="3">predict_out &lt;-<span class="st"> </span><span class="kw">compare_predictions</span>(<span class="dt">ergm.fit =</span> ergm.fit, <span class="dt">fergm.fit =</span> fergm.fit, <span class="dt">replications =</span> <span class="dv">100</span>)</a>
+<a class="sourceLine" id="cb5-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb5-5" data-line-number="5"><span class="co"># Use the built in compare_predictions_plot function to examine the densities of correctly predicted</span></a>
+<a class="sourceLine" id="cb5-6" data-line-number="6">  <span class="co"># ties from the compare_predictions simulations</span></a>
+<a class="sourceLine" id="cb5-7" data-line-number="7"><span class="kw">compare_predictions_plot</span>(predict_out)</a>
+<a class="sourceLine" id="cb5-8" data-line-number="8"></a>
+<a class="sourceLine" id="cb5-9" data-line-number="9"><span class="co"># We can also conduct a KS test to determine if the FERGM fit it statistically disginguishable </span></a>
+<a class="sourceLine" id="cb5-10" data-line-number="10">  <span class="co"># from the ERGM fit</span></a>
+<a class="sourceLine" id="cb5-11" data-line-number="11"><span class="kw">compare_predictions_test</span>(predict_out)</a></code></pre></div>
 </div>
 <div id="references" class="section level1 unnumbered">
 <h1>References</h1>

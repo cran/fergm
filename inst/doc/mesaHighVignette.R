@@ -42,7 +42,7 @@
 #                       custom_var_names = c("Edges", "Sex Homophily",
 #                                            "GradeHomophily", "Race Homophily",
 #                                            "GWESP", "Alternating K-Stars"))
-#  
+#  est
 #  # Compare substantive implications via coef plot, these are with 95% credible intervals
 #  coef_plot(fergm.fit = fergm.fit)
 #  
@@ -81,6 +81,7 @@
 
 ## ---- echo = TRUE, eval = FALSE------------------------------------------
 #  # Use fergm built in compare_predictions function to compare predictions of ERGM and FERGM
+#  net <- ergm.fit$network
 #  predict_out <- compare_predictions(ergm.fit = ergm.fit, fergm.fit = fergm.fit, replications = 100)
 #  
 #  # Use the built in compare_predictions_plot function to examine the densities of correctly predicted
